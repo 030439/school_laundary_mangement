@@ -20,5 +20,10 @@ class Student extends Model
     {
         return $this->hasMany(LaundryRecord::class);
     }
+    public function transactions()
+    {
+        return $this->hasMany(PocketMoneyTransaction::class);
+    }
+
 }
 

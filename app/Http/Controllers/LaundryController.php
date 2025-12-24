@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LaundryRecord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LaundryController extends Controller
 {
@@ -59,24 +60,58 @@ class LaundryController extends Controller
         ]);
     }
 
+    public function dhobiSummary(Request $request)
+{
+    $month = $request->month;
+    $year  = $request->year;
+
+    if (!$month || !$year) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Month and year are required'
+        ], 422);
+    }
+
+    $data = DB::table('laundry_records as c')
+        ->select(
+            's.name as name',
+            DB::raw('SUM(c.clothes_count) as totalClothes'),
+            DB::raw('SUM(c.total_amount) as totalCost'),
+            DB::raw('COUNT(c.id) as entryCount')
+        )
+        ->join('laundry_staff as s', 'c.staff_id', '=', 's.id')
+        ->whereMonth('c.record_date', $month)
+        ->whereYear('c.record_date', $year)
+        ->groupBy('s.name')
+        ->havingRaw('COUNT(c.id) > 0')
+        ->orderBy('s.name')
+        ->get();
+
+    return response()->json([
+        'status' => true,
+        'data' => $data
+    ]);
+}
+
+
     public function studentLaundrySummary(Request $request)
 {
     $month = $request->month;
     $year  = $request->year;
 
-    $data = DB::table('laundry_entries as l')
+    $data = DB::table('laundry_records as l')
         ->join('students as s', 's.id', '=', 'l.student_id')
         ->select(
             's.id',
             's.studentId',
             's.name',
             DB::raw("CONCAT(s.class,' - ',s.section) as class"),
-            DB::raw('SUM(l.number_of_clothes) as totalClothes'),
+            DB::raw('SUM(l.clothes_count) as totalClothes'),
             DB::raw('SUM(l.total_amount) as totalCost'),
             DB::raw('COUNT(l.id) as entryCount')
         )
-        ->whereMonth('l.date', $month)
-        ->whereYear('l.date', $year)
+        ->whereMonth('l.record_date', $month)
+        ->whereYear('l.record_date', $year)
         ->groupBy('s.id','s.studentId','s.name','s.class','s.section')
         ->get();
 

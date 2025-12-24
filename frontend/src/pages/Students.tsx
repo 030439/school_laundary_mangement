@@ -66,7 +66,7 @@ export default function Students() {
           section: s.section || '',
           parentName: s.parentName || s.parent_name,
           monthlyPocketMoney: Number(s.monthlyPocketMoney || s.monthly_pocket_money),
-          status: s.status === 1 ? 'active' : 'inactive',
+          status: s.status === 'active' ? 'active' : 'inactive',
           createdAt: s.created_at,
         }));
         setStudents(studentsData);

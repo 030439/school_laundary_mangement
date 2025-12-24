@@ -17,12 +17,26 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::apiResource('students', StudentController::class);
 
     // pocket money
-    Route::post('pocket-money', [PocketMoneyController::class, 'store']);
-    Route::get('pocket-money/report', [PocketMoneyController::class, 'monthlyReport']);
+    // Route::post('pocket-money', [PocketMoneyController::class, 'store']);
+    // Route::get('pocket-money/report', [PocketMoneyController::class, 'monthlyReport']);
+    
+    // Pocket Money Transactions
+    Route::get('/pocket-money-transactions', [PocketMoneyController::class, 'index']);
+    Route::post('/pocket-money-transactions', [PocketMoneyController::class, 'store']);
+    Route::put('/pocket-money-transactions/{id}', [PocketMoneyController::class, 'update']);
+    Route::delete('/pocket-money-transactions/{id}', [PocketMoneyController::class, 'destroy']);
+
+    // Pocket Money Summary
+    Route::get('/pocket-money/student-summary', [PocketMoneyController::class, 'studentSummary']);
+
 
     // laundry
     Route::apiResource('laundry-staff', LaundryStaffController::class);
+    
     Route::post('laundry-records', [LaundryController::class, 'store']);
     Route::get('laundry/report', [LaundryController::class, 'monthlyReport']);
-     Route::get('laundry', [LaundryController::class, 'index']);
+    Route::get('laundry', [LaundryController::class, 'index']);
+    Route::get('reports/student-laundry-summary', [LaundryController::class, 'studentLaundrySummary']);
+    Route::get('reports/laundry/dhobi-summary', [LaundryController::class, 'dhobiSummary']);
+
 });
