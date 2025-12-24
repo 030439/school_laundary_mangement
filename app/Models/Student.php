@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     protected $fillable = [
-        'student_code','name','class','section',
-        'parent_name','monthly_pocket_money','status'
+        'studentId','name','class','section',
+        'parentName','monthlyPocketMoney','status'
     ];
 
     public function pocketMoney()

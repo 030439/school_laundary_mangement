@@ -13,17 +13,16 @@ return new class extends Migration
     {
        Schema::create('students', function (Blueprint $table) {
         $table->id();
-        $table->string('student_code')->unique();
+        $table->string('studentId')->unique();
         $table->string('name');
         $table->string('class');
         $table->string('section')->nullable();
-        $table->string('parent_name');
-        $table->decimal('monthly_pocket_money', 10, 2)->default(0);
-        $table->boolean('status')->default(1);
+        $table->string('parentName');
+        $table->decimal('monthlyPocketMoney', 10, 2)->default(0);
+        $table->enum('status', ['active', 'inactive'])->default('active');
         $table->timestamps();
-    });
-
-    }
+        });
+   }
 
     /**
      * Reverse the migrations.
