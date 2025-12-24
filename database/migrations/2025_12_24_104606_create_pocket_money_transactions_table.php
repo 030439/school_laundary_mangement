@@ -13,8 +13,15 @@ return new class extends Migration
     {
         Schema::create('pocket_money_transactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->decimal('amount', 10, 2);
+            $table->tinyInteger('month');
+            $table->smallInteger('year');
+            $table->date('transaction_date');
+            $table->string('remarks')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**
