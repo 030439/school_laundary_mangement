@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('laundry_staff', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('phone')->nullable();
+            $table->decimal('per_cloth_rate', 10, 2)->default(0);
+            $table->boolean('status')->default(1);
             $table->timestamps();
-        });
+});
+
     }
 
     /**
