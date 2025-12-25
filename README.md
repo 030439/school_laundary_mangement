@@ -57,7 +57,7 @@ Protected routes (frontend + backend)
 🛠 Tech Stack
 Backend
 
-Laravel 10+
+Laravel 12+
 
 Eloquent ORM
 
@@ -175,11 +175,16 @@ Mobile-friendly navigation
 ✔ No hard-coded dates
 ✔ Accurate financial calculations
 
-👨‍💻 Developer
+## 📜 License
 
-Developed with ❤️ by Kp
+This project is **free and open for public use**.
 
-📜 License
+You are allowed to:
+- Use this project for personal or educational purposes
+- Modify and customize the source code
+- Share and distribute the project
 
-This project is proprietary and intended for private or educational use.
-Contact the author for commercial usage.
+Commercial usage is allowed with proper attribution to the author.
+
+
+
