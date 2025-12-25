@@ -133,7 +133,7 @@ class LaundryController extends Controller
             'clothes_count' => $request->clothes_count,
             'rate_per_cloth' => $request->rate_per_cloth,
             'total_amount' => $total,
-            'record_date' => $request->record_date,
+            'record_date' => $request->date,
         ]);
 
         return response()->json([

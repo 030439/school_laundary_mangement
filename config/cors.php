@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:8081'], // React dev server
+    'allowed_origins' => ['http://localhost:8080'], // React dev server
 
     'allowed_origins_patterns' => [],
 

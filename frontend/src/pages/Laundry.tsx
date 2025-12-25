@@ -108,12 +108,13 @@ export default function Laundry() {
 
     const selectedDhobi = dhobis.find(d => d.id === formData.dhobiId);
 
-    await api.post('/laundry-entries', {
+    await api.post('/admin/laundry-records', {
       student_id: formData.studentId,
+      staff_id:formData.dhobiId,
       date: formData.date,
-      number_of_clothes: Number(formData.numberOfClothes),
+      clothes_count: Number(formData.numberOfClothes),
       dhobi_name: selectedDhobi?.name,
-      cost_per_cloth: Number(formData.costPerCloth),
+      rate_per_cloth: Number(formData.costPerCloth),
     });
 
     toast({ title: 'Success', description: 'Laundry entry recorded.' });

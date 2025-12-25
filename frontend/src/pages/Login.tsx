@@ -52,29 +52,36 @@ const Login = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+
+
+
+
+
+
+
+   return (
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo & Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-lg">
-            <GraduationCap className="w-10 h-10" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary text-primary-foreground mb-4 shadow-lg">
+            <GraduationCap className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-extrabold text-gray-800">School Management</h1>
-          <p className="text-gray-500 mt-1">Boarding School Admin Portal</p>
+          <h1 className="text-2xl font-bold text-foreground">School Management</h1>
+          <p className="text-muted-foreground mt-1">Boarding School Admin Portal</p>
         </div>
 
         {/* Login Card */}
-        <Card className="shadow-2xl border border-gray-200 rounded-2xl overflow-hidden">
-          <CardHeader className="text-center bg-gradient-to-r from-blue-500 to-purple-500 text-white py-6">
-            <CardTitle className="text-2xl">Sign In</CardTitle>
+        <Card className="shadow-xl border-border/50">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-xl">Sign In</CardTitle>
             <CardDescription>Enter your credentials to access the dashboard</CardDescription>
           </CardHeader>
-          <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-1">
+          <CardContent>
+             <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
+                 <Input
                   id="email"
                   type="email"
                   placeholder="admin@school.com"
@@ -85,7 +92,7 @@ const Login = () => {
                 />
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
@@ -108,30 +115,23 @@ const Login = () => {
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <label className="flex items-center gap-2 cursor-pointer text-gray-600">
-                  <input type="checkbox" className="rounded border-gray-300" />
-                  Remember me
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" className="rounded border-input" />
+                  <span className="text-muted-foreground">Remember me</span>
                 </label>
-                <button type="button" className="text-blue-500 hover:underline">
+                <button type="button" className="text-primary hover:underline">
                   Forgot password?
                 </button>
               </div>
 
-              <Button type="submit" className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white font-semibold" disabled={isLoading}>
+                            <Button type="submit" className="w-full h-11" disabled={isLoading}>
                 {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
-
-            {/* Demo Credentials */}
-            <div className="mt-6 p-3 bg-gray-100 rounded-lg text-center text-gray-500 text-sm">
-              <p>
-                <strong>Demo:</strong> Use any email/password to access
-              </p>
-            </div>
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-gray-400 mt-6">
+        <p className="text-center text-sm text-muted-foreground mt-6">
           © 2024 School Management System
         </p>
       </div>
@@ -140,3 +140,4 @@ const Login = () => {
 };
 
 export default Login;
+

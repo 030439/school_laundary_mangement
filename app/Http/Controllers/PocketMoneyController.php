@@ -122,7 +122,7 @@ class PocketMoneyController extends Controller
         $month = $request->query('month');
         $year = $request->query('year');
 
-        $students = Student::where('status', 'active')->get();
+        $students = Student::all();
 
         $summary = $students->map(function ($student) use ($month, $year) {
             $transactions = $student->transactions()
