@@ -34,7 +34,9 @@ export default function Laundry() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [selectedMonth, setSelectedMonth] = useState('12'); // Month as number string
-  const [selectedYear, setSelectedYear] = useState('2025');
+  // const [selectedYear, setSelectedYear] = useState('2025');
+     const currentYear = new Date().getFullYear().toString();
+   const [selectedYear, setSelectedYear] = useState(currentYear);
 
   const [formData, setFormData] = useState({
     studentId: '',
@@ -185,7 +187,11 @@ export default function Laundry() {
           <Select value={selectedYear} onValueChange={setSelectedYear}>
             <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {['2023','2024','2025'].map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+              {[
+                "2020","2021","2022","2023","2024","2025","2026","2027","2028","2029",
+                "2030","2031","2032","2033","2034","2035","2036","2037","2038","2039",
+                "2040","2041","2042","2043","2044","2045","2046","2047","2048","2049",
+                "2050"].map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}
             </SelectContent>
           </Select>
 

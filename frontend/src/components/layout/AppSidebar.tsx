@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast'; // make sure this hook exists
+import api from '@/api/axios';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
@@ -22,7 +23,7 @@ const navItems = [
   { icon: Wallet, label: 'Pocket Money', path: '/pocket-money' },
   { icon: Shirt, label: 'Laundry', path: '/laundry' },
   { icon: UserCog, label: 'Dhobi', path: '/dhobi' },
-  { icon: FileText, label: 'Reports', path: '/reports' },
+  // { icon: FileText, label: 'Reports', path: '/reports' },
 ];
 
 export function AppSidebar() {
@@ -33,21 +34,23 @@ export function AppSidebar() {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const handleLogout = () => {
-    // Clear token from localStorage
-    localStorage.removeItem('token');
 
-    // Optional: clear any app state or context if needed
-
+const handleLogout = async () => {
+  try {
+    await api.post('/admin/logout'); // call backend
+  } catch (error) {
+    console.log('Logout API failed:', error);
+  } finally {
+    localStorage.removeItem('token'); // always clear token
     toast({
       title: 'Logged out',
       description: 'You have been successfully logged out.',
       variant: 'default',
     });
+    navigate('/login'); // redirect
+  }
+};
 
-    // Redirect to login
-    navigate('/login');
-  };
 
   return (
     <>

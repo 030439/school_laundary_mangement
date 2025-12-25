@@ -132,7 +132,7 @@ const Login = () => {
         </Card>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          © 2024 School Management System
+          © {new Date().getFullYear()} School Management System
         </p>
       </div>
     </div>

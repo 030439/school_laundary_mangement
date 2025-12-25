@@ -1,9 +1,16 @@
 import { useState } from 'react';
 import { FileText, Download, Printer } from 'lucide-react';
+import api from '@/api/axios';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -14,18 +21,18 @@ import {
 import { toast } from '@/hooks/use-toast';
 
 const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  { label: 'January', value: 1 },
+  { label: 'February', value: 2 },
+  { label: 'March', value: 3 },
+  { label: 'April', value: 4 },
+  { label: 'May', value: 5 },
+  { label: 'June', value: 6 },
+  { label: 'July', value: 7 },
+  { label: 'August', value: 8 },
+  { label: 'September', value: 9 },
+  { label: 'October', value: 10 },
+  { label: 'November', value: 11 },
+  { label: 'December', value: 12 },
 ];
 
 interface ReportCard {
@@ -82,24 +89,61 @@ const reports: ReportCard[] = [
 ];
 
 export default function Reports() {
-  const [selectedMonth, setSelectedMonth] = useState('December');
-  const [selectedYear, setSelectedYear] = useState('2024');
+  const [selectedMonth, setSelectedMonth] = useState<number>(12);
+  const [selectedYear, setSelectedYear] = useState<string>('2024');
+  const [loading, setLoading] = useState<string | null>(null);
 
-  const handleExport = (reportId: string, format: 'pdf' | 'excel') => {
-    toast({
-      title: 'Export Initiated',
-      description: `Generating ${format.toUpperCase()} report for ${selectedMonth} ${selectedYear}...`,
-    });
-    // API-ready: This would trigger the actual export
+  /* ================= EXPORT ================= */
+
+  const handleExport = async (
+    reportId: string,
+    format: 'pdf' | 'excel'
+  ) => {
+    try {
+      setLoading(reportId + format);
+
+      const res = await api.get(
+        `/admin/reports/${reportId}/export/${format}`,
+        {
+          params: {
+            month: selectedMonth,
+            year: selectedYear,
+          },
+          responseType: 'blob',
+        }
+      );
+
+      const blob = new Blob([res.data]);
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${reportId}-${selectedMonth}-${selectedYear}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
+      link.click();
+
+      toast({
+        title: 'Report Generated',
+        description: `${format.toUpperCase()} downloaded successfully`,
+      });
+    } catch (e) {
+      toast({
+        title: 'Export Failed',
+        description: 'Unable to generate report',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(null);
+    }
   };
+
+  /* ================= PRINT ================= */
 
   const handlePrint = (reportId: string) => {
-    toast({
-      title: 'Print Preview',
-      description: `Opening print preview for ${selectedMonth} ${selectedYear}...`,
-    });
-    // API-ready: This would open print preview
+    const url = `${import.meta.env.VITE_API_BASE_URL}/admin/reports/${reportId}/print?month=${selectedMonth}&year=${selectedYear}`;
+    window.open(url, '_blank');
   };
+
+  /* ================= UI HELPERS ================= */
 
   const getCategoryColor = (category: ReportCard['category']) => {
     switch (category) {
@@ -137,74 +181,35 @@ export default function Reports() {
 
   return (
     <MainLayout>
-      <PageHeader
-        title="Reports"
-        description="Generate and export detailed reports"
-      >
+      <PageHeader title="Reports" description="Generate and export detailed reports">
         <div className="flex items-center gap-2">
-          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+          <Select value={String(selectedMonth)} onValueChange={(v) => setSelectedMonth(Number(v))}>
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {months.map((month) => (
-                <SelectItem key={month} value={month}>
-                  {month}
+              {months.map((m) => (
+                <SelectItem key={m.value} value={String(m.value)}>
+                  {m.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+
           <Select value={selectedYear} onValueChange={setSelectedYear}>
             <SelectTrigger className="w-24">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {['2023', '2024', '2025'].map((year) => (
-                <SelectItem key={year} value={year}>
-                  {year}
+              {['2023', '2024', '2025'].map((y) => (
+                <SelectItem key={y} value={y}>
+                  {y}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
       </PageHeader>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-card rounded-xl border border-border p-5 card-shadow">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-              <FileText className="w-5 h-5 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-foreground">6</p>
-              <p className="text-sm text-muted-foreground">Available Reports</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-secondary/10 rounded-xl border border-secondary/20 p-5 card-shadow">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
-              <FileText className="w-5 h-5 text-secondary" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-foreground">2</p>
-              <p className="text-sm text-muted-foreground">Pocket Money Reports</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-primary/10 rounded-xl border border-primary/20 p-5 card-shadow">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-              <FileText className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-foreground">3</p>
-              <p className="text-sm text-muted-foreground">Laundry Reports</p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Report Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -223,26 +228,31 @@ export default function Reports() {
               <CardTitle className="text-lg mt-3">{report.title}</CardTitle>
               <CardDescription>{report.description}</CardDescription>
             </CardHeader>
+
             <CardContent>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   className="flex-1"
+                  disabled={loading !== null}
                   onClick={() => handleExport(report.id, 'pdf')}
                 >
                   <Download className="w-4 h-4 mr-1" />
                   PDF
                 </Button>
+
                 <Button
                   variant="outline"
                   size="sm"
                   className="flex-1"
+                  disabled={loading !== null}
                   onClick={() => handleExport(report.id, 'excel')}
                 >
                   <Download className="w-4 h-4 mr-1" />
                   Excel
                 </Button>
+
                 <Button
                   variant="ghost"
                   size="icon"
@@ -254,29 +264,6 @@ export default function Reports() {
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      {/* Info Section */}
-      <div className="mt-8 bg-muted/50 rounded-xl p-6 border border-border">
-        <h3 className="font-semibold text-foreground mb-2">Report Information</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          All reports are generated based on the selected month and year. Export
-          buttons will generate downloadable files ready for printing or sharing.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-secondary" />
-            <span className="text-muted-foreground">
-              Pocket Money reports include transaction history and balances
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-primary" />
-            <span className="text-muted-foreground">
-              Laundry reports include costs and staff performance
-            </span>
-          </div>
-        </div>
       </div>
     </MainLayout>
   );

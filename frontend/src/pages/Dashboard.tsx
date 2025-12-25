@@ -1,12 +1,11 @@
+import { useEffect, useState } from 'react';
+import api from '@/api/axios';
+
 import { Users, Wallet, Shirt, TrendingUp, Banknote } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { PageHeader } from '@/components/ui/page-header';
 import { StatCard } from '@/components/ui/stat-card';
-import {
-  mockDashboardStats,
-  monthlyPocketMoneyData,
-  monthlyLaundryData,
-} from '@/data/mockData';
+
 import {
   BarChart,
   Bar,
@@ -19,7 +18,41 @@ import {
 } from 'recharts';
 
 export default function Dashboard() {
-  const formatCurrency = (value: number) => `Rs. ${value.toLocaleString()}`;
+  const [stats, setStats] = useState<any>({
+    totalStudents: 0,
+    pocketMoneyGivenThisMonth: 0,
+    pocketMoneyRemaining: 0,
+    clothesWashedThisMonth: 0,
+    monthlyLaundryCost: 0,
+  });
+
+  const [monthlyPocketMoneyData, setMonthlyPocketMoneyData] = useState<any[]>([]);
+  const [monthlyLaundryData, setMonthlyLaundryData] = useState<any[]>([]);
+
+  const formatCurrency = (value: number) => `Rs. ${Number(value || 0).toLocaleString()}`;
+
+  /* ================= LOAD DASHBOARD DATA ================= */
+
+  useEffect(() => {
+    fetchDashboardStats();
+    fetchPocketMoneyChart();
+    fetchLaundryChart();
+  }, []);
+
+  const fetchDashboardStats = async () => {
+    const res = await api.get('/admin/dashboard/stats');
+    setStats(res.data);
+  };
+
+  const fetchPocketMoneyChart = async () => {
+    const res = await api.get('/admin/dashboard/pocket-money-chart');
+    setMonthlyPocketMoneyData(res.data);
+  };
+
+  const fetchLaundryChart = async () => {
+    const res = await api.get('/admin/dashboard/laundry-chart');
+    setMonthlyLaundryData(res.data);
+  };
 
   return (
     <MainLayout>
@@ -28,58 +61,69 @@ export default function Dashboard() {
         description="Welcome back! Here's an overview of your school management system."
       />
 
-      {/* Stats Grid */}
+      {/* ================= STATS GRID ================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
         <StatCard
           title="Total Students"
-          value={mockDashboardStats.totalStudents}
+          value={stats.totalStudents}
           subtitle="Active students"
           icon={Users}
           variant="primary"
         />
+
         <StatCard
           title="Pocket Money Given"
-          value={formatCurrency(mockDashboardStats.pocketMoneyGivenThisMonth)}
+          value={formatCurrency(stats.pocketMoneyGivenThisMonth)}
           subtitle="This month"
           icon={Wallet}
           variant="secondary"
-          trend={{ value: 12, isPositive: true }}
         />
+
         <StatCard
           title="Money Remaining"
-          value={formatCurrency(mockDashboardStats.pocketMoneyRemaining)}
+          value={formatCurrency(stats.pocketMoneyRemaining)}
           subtitle="To be distributed"
           icon={Banknote}
           variant="warning"
         />
+
         <StatCard
           title="Clothes Washed"
-          value={mockDashboardStats.clothesWashedThisMonth}
+          value={stats.clothesWashedThisMonth}
           subtitle="This month"
           icon={Shirt}
           variant="default"
         />
+
         <StatCard
           title="Laundry Cost"
-          value={formatCurrency(mockDashboardStats.monthlyLaundryCost)}
+          value={formatCurrency(stats.monthlyLaundryCost)}
           subtitle="This month"
           icon={TrendingUp}
           variant="success"
         />
       </div>
 
-      {/* Charts */}
+      {/* ================= CHARTS ================= */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
         {/* Pocket Money Chart */}
         <div className="bg-card rounded-xl border border-border p-6 card-shadow animate-fade-in">
           <h3 className="text-lg font-semibold text-foreground mb-4">
             Pocket Money Overview
           </h3>
+
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlyPocketMoneyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                />
+                <XAxis
+                  dataKey="month"
+                  stroke="hsl(var(--muted-foreground))"
+                />
                 <YAxis stroke="hsl(var(--muted-foreground))" />
                 <Tooltip
                   contentStyle={{
@@ -112,12 +156,22 @@ export default function Dashboard() {
           <h3 className="text-lg font-semibold text-foreground mb-4">
             Monthly Laundry Summary
           </h3>
+
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlyLaundryData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
-                <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                />
+                <XAxis
+                  dataKey="month"
+                  stroke="hsl(var(--muted-foreground))"
+                />
+                <YAxis
+                  yAxisId="left"
+                  stroke="hsl(var(--muted-foreground))"
+                />
                 <YAxis
                   yAxisId="right"
                   orientation="right"
@@ -151,7 +205,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Quick Actions */}
+      {/* ================= QUICK ACTIONS ================= */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
         <QuickActionCard
           title="Add New Student"
@@ -173,6 +227,8 @@ export default function Dashboard() {
   );
 }
 
+/* ================= QUICK ACTION CARD ================= */
+
 function QuickActionCard({
   title,
   description,
@@ -190,7 +246,9 @@ function QuickActionCard({
       <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
         {title}
       </h4>
-      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        {description}
+      </p>
     </a>
   );
 }
